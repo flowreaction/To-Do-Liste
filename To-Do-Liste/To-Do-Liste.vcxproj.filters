@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="todolist.1.c">
+    <ClCompile Include="todolist.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

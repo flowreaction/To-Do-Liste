@@ -114,7 +114,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="todolist.1.c">
+    <ClCompile Include="todolist.c">
       <SubType>
       </SubType>
     </ClCompile>
