@@ -25,7 +25,7 @@ typedef struct toDoList
 
 /******************functionsprototypes**********************/
 toDoList* newListItem(toDoList *start);
-void removeItem(toDoList *start);
+toDoList* removeItem(toDoList *start);
 void clearList(toDoList *start);
 void printList(toDoList *start);
 void saveList(toDoList *start);
@@ -65,7 +65,7 @@ int main(void) {
 		else if (!strncmp(action, "new", 3))
 			start = newListItem(start);
 		else if (!strncmp(action, "remove", 6))
-			removeItem(start);
+			start = removeItem(start);
 		else if (!strncmp(action, "print", 5))
 			printList(start);
 		else if (!strncmp(action, "save", 4))
@@ -112,7 +112,7 @@ toDoList* newListItem(toDoList *start){
 	return start;
 }
 
-void removeItem(toDoList *start) {
+toDoList* removeItem(toDoList *start) {
 	if (start == NULL)
 		printf("There are no items on this list.");
 	else
@@ -126,12 +126,24 @@ void removeItem(toDoList *start) {
 		flashStandardInput();
 		newline();
 		position = atoi(strPosition);
-		for (int i = 1; i < position - 1; i++)
-			currentItem = currentItem->next;				//stepping to item which is next to the item which is to be removed.
-		deleteItem = currentItem->next;						//deleteItem becomes the item which is to be removed
-		currentItem->next = deleteItem->next;				//next pointer of current item pointing to the item after deleteItem, thus deleteItem is not connected to previous it
-		deleteItem->next = NULL;							//deleteItem is completly seperate from list
-		free(deleteItem);									//deleteItem is removed	
+		if (position == 1){										//if item to be deletet is the first item
+			deleteItem = currentItem;							//set first item to delete and current to next
+			currentItem = deleteItem->next;					//and current to next
+			start = currentItem;								//new start to current
+			deleteItem->next = NULL;							//deleteItem is completly seperate from list
+			free(deleteItem);									//deleteItem is removed	
+			return start;
+		}
+		else{
+			for (int i = 1; i < position - 1; i++)
+				currentItem = currentItem->next;				//stepping to item which is next to the item which is to be removed.
+			deleteItem = currentItem->next;						//deleteItem becomes the item which is to be removed
+			currentItem->next = deleteItem->next;				//next pointer of current item pointing to the item after deleteItem, thus deleteItem is not connected to previous it
+			deleteItem->next = NULL;							//deleteItem is completly seperate from list
+			free(deleteItem);									//deleteItem is removed
+			return start;
+		}
+											
 	}
 }
 
