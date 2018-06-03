@@ -39,48 +39,43 @@ void newline(void);
 int main(void) {
 
 	toDoList *start = NULL;
-	char underline[] = { 238, 238, 238,238,238 ,238 ,238 ,238 ,238 ,238 ,238 ,238 ,238 ,238 ,238 ,238 ,238 ,238,238,238,238,238,238,238,238,238, '\0'};
+	char underline[] = { 238, 238, 238,238,238 ,238 ,238 ,238 ,238 ,238 ,238 ,238 ,238 ,238 ,238, '\0'};
 	bool loop = true;
-	char action[7];
-	//FILE *fp = fopen("list.dat", "rb");
-	//if (fp == NULL){
-	//	fp = fopen("list.dat","wb");
-	//}
-	//start = loadList(fp);
+	char action[7];	
 
 
-	
-	
+	printf("\tYour to-do-list\n");
+	printf("\t%s\n\n\n", underline);
+
 	while (loop){
-		printf("\tYour to-do-list\n");
-		printf("%s\n\n\n", underline);
-
-		printf("what do you want to do?\n");
-		printf("to create a new list item type:\t\t\tnew\n");
-		printf("to remove a  list item type:\t\t\tremove\n");
-		printf("to print the list type:\t\t\t\tprint\n");
-		printf("to save the list type:\t\t\t\tsave\n");
-		printf("to load the list from a file type:\t\tload\n");
-		printf("to exit program type:\t\t\t\texit\n\n");
+		printf("Enter one of the following commands.\n\n");
+		printf("\tto create a new list item enter:\t\tnew\n");
+		printf("\tto remove a list item enter:\t\t\tremove\n");
+		printf("\tto clear the list enter:\t\t\tclear\n");
+		printf("\tto print the list enter:\t\t\tprint\n");
+		printf("\tto save the list enter:\t\t\t\tsave\n");
+		printf("\tto load the list from a file enter:\t\tload\n");
+		printf("\tto exit program enter:\t\t\t\texit\n\n");
 
 		scanf("%6[^\n]", action);
 		flashStandardInput();
-
-		if (!strcmp(action, "new"))
+		newline();
+		if ((strncmp(action, "new", 3) != 0)  && (strncmp(action, "remove", 6) != 0) && (strncmp(action, "print", 5) != 0) && (strncmp(action, "save", 4) != 0) && (strncmp(action, "load", 4) != 0) && (strncmp(action, "clear", 5) != 0) && (strncmp(action, "exit", 4) != 0))
+			printf("Enter a valid command.\n\n\n\n");
+		else if (!strncmp(action, "new", 3))
 			start = newListItem(start);
-		else if (!strcmp(action, "remove"))
+		else if (!strncmp(action, "remove", 6))
 			removeItem(start);
-		else if (!strcmp(action, "print"))
+		else if (!strncmp(action, "print", 5))
 			printList(start);
-		else if (!strcmp(action, "save"))
+		else if (!strncmp(action, "save", 4))
 			saveList(start);
-		else if (!strcmp(action, "load"))
-			loadList(start);
-		else if (!strcmp(action, "exit"))
-		{
+		else if (!strncmp(action, "load", 4))
+			start = loadList(start);
+		else if (!strncmp(action, "clear", 5))
+			clearList(start);
+		else if (!strncmp(action, "exit", 4))
 			exit(0);
-		}
-		
 	}
 	return 0;
 }
@@ -113,11 +108,31 @@ toDoList* newListItem(toDoList *start){
 	strcpy(currentItem->location, location);
 	currentItem->next = start;
 	start = currentItem;
+	printf("List Item %s entered...", currentItem->task);
 	return start;
 }
 
 void removeItem(toDoList *start) {
-
+	if (start == NULL)
+		printf("There are no items on this list.");
+	else
+	{
+		toDoList *currentItem = start;
+		toDoList *deleteItem = NULL;
+		char strPosition[3] = { 0 };
+		short position = 0;
+		printf("Enter number of item you wnat to remove: ");
+		scanf("%2[0-9]", strPosition);
+		flashStandardInput();
+		newline();
+		position = atoi(strPosition);
+		for (int i = 1; i < position - 1; i++)
+			currentItem = currentItem->next;				//stepping to item which is next to the item which is to be removed.
+		deleteItem = currentItem->next;						//deleteItem becomes the item which is to be removed
+		currentItem->next = deleteItem->next;				//next pointer of current item pointing to the item after deleteItem, thus deleteItem is not connected to previous it
+		deleteItem->next = NULL;							//deleteItem is completly seperate from list
+		free(deleteItem);									//deleteItem is removed	
+	}
 }
 
 void clearList(toDoList *start) {
@@ -133,12 +148,16 @@ void clearList(toDoList *start) {
 void printList(toDoList *start) {
 	toDoList *currentItem = start;
 	int i = 0;
-	while (currentItem != NULL) {
-		printf("Task #%d\n", ++i);
-		printf("Task:\t\t%s\n", currentItem->task);
-		printf("Deadline:\t%s\n", currentItem->deadline);
-		printf("Location:\t%s\n\n\n", currentItem->location);
-		currentItem = currentItem->next;
+	if (currentItem == NULL)
+		printf("The list is empty.\n\n\n");
+	else{
+		while (currentItem != NULL) {
+			printf("Task #%d\n", ++i);
+			printf("Task:\t\t%s\n", currentItem->task);
+			printf("Deadline:\t%s\n", currentItem->deadline);
+			printf("Location:\t%s\n\n\n", currentItem->location);
+			currentItem = currentItem->next;
+		}
 	}
 }
 
@@ -181,7 +200,7 @@ toDoList *readNextItemFromFile(toDoList *start, FILE *fp) {
 }
 
 toDoList* loadList(toDoList *start) {
-	FILE *fp = fopen("list.bin", "rb");								//creates file
+	FILE *fp = fopen("list.bin", "rb");								//opens file
 	if (fp == NULL) {
 		fprintf(stderr, "ERROR OPENING FILE\n");
 		return NULL;
@@ -196,7 +215,7 @@ toDoList* loadList(toDoList *start) {
 		int numOfItems = (int)(fileSize / (sizeof(toDoList)));
 		for (int i = 0; i < numOfItems; i++)
 		{
-			fseek(fp, (sizeof(toDoList)*i), SEEK_SET);
+			fseek(fp, (sizeof(toDoList) * i), SEEK_SET);
 			start = readNextItemFromFile(start, fp);
 		}
 	}
