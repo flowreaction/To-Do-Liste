@@ -97,15 +97,15 @@ toDoList* newListItem(toDoList *start){
 	char deadline[99] = { 0 };
 	char location[99] = { 0 };
 	printf("Enter the task: ");
-	scanf("%[^\n]s", task);
+	scanf("%98[^\n]s", task);
 	flashStandardInput();
 	newline();
 	printf("Enter the deadline: ");
-	scanf("%[^\n]s", deadline);
+	scanf("%98[^\n]s", deadline);
 	flashStandardInput();
 	newline();
 	printf("Enter the location: ");
-	scanf("%[^\n]s", location);
+	scanf("%98[^\n]s", location);
 	flashStandardInput();
 	newline();
 	currentItem = (toDoList*)malloc(sizeof(toDoList));
@@ -236,15 +236,14 @@ toDoList* loadList(toDoList *start) {
 		fprintf(stderr, "ERROR OPENING FILE\n");
 		return NULL;
 	}else {
-		start = clearList(start);
+		start = clearList(start);									//
 
 		fseek(fp, 0, SEEK_END);
 		long fileSize = ftell(fp);
 		rewind(fp);
 
 		int numOfItems = (int)(fileSize / (sizeof(toDoList)));
-		for (int i = 0; i < numOfItems; i++)
-		{
+		for (int i = 0; i < numOfItems; i++){
 			fseek(fp, (sizeof(toDoList) * i), SEEK_SET);
 			start = readNextItemFromFile(start, fp);
 		}
