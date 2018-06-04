@@ -1,9 +1,9 @@
 /*
-Aufgabe		To-Do-List
-Autor		Florian Bopp
-Datum		4.6.18
+task		To-Do-List
+author		Florian Bopp
+date		4.6.18
 
-Kurzbeschreibung:	This program gives the user a way to save and load his todo list from or to a file.
+summary:	This program gives the user a way to save and load his todo list from or to a file.
 					It enables the user to add items to the list or remove them, once an item  
 					can be crossed off, of the list.
 					This is acomplished using a singly-linked list and fwrite/fread functions.
